@@ -223,7 +223,7 @@
         <div class="content-box">
             {% if question.image %}
                 <div class="image-container">
-                    <img src="{{ question.image.url }}" alt="Question Image">
+                    <img src="{{ question.image.url }}" alt="Question Image" style="max-width: 50%;">
                 </div>
             {% endif %}
             <div class="comment-content">{{ question.content }}</div>

@@ -12,4 +12,5 @@ urlpatterns = [
     path('questions/<int:pk>/delete/', views.delete_question, name='delete_question'),
     path('create_question/', views.create_question, name='create_question'),
     path('comment/<int:pk>/delete/', views.delete_comment, name='delete_comment'),
+    path('user_questions/', views.user_questions, name='user_questions'),
 ]
