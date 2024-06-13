@@ -102,3 +102,28 @@ def delete_comment(request, pk):
     
     comment.delete()
     return redirect('board:question_detail', pk=comment.question.pk)
+
+@login_required
+def delete_question(request, pk):
+    question = get_object_or_404(Question, pk=pk)
+    if question.user != request.user:
+        return HttpResponseForbidden("이 질문을 삭제할 권한이 없습니다.")
+    
+    question.delete()
+    return redirect('board:index')
+
+@login_required
+def edit_question(request, pk):
+    question = get_object_or_404(Question, pk=pk)
+    if question.user != request.user:
+        return HttpResponseForbidden("이 질문을 수정할 권한이 없습니다.")
+    
+    if request.method == 'POST':
+        form = QuestionForm(request.POST, request.FILES, instance=question)
+        if form.is_valid():
+            form.save()
+            return redirect('board:question_detail', pk=question.pk)
+    else:
+        form = QuestionForm(instance=question)
+    
+    return render(request, 'board/edit_question.html', {'form': form, 'question': question})

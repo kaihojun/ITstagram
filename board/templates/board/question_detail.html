@@ -208,6 +208,17 @@
         <div class="date-box">
             작성일: {{ question.pub_date }}
         </div>
+        {% if user.is_authenticated and user == question.user %}
+            <div style="text-align: right;">
+                <form action="{% url 'board:edit_question' question.pk %}" method="get" style="display:inline;">
+                    <button type="submit" class="btn btn-secondary btn-sm" style="margin-right: 10px;">수정</button>
+                </form>
+                <form action="{% url 'board:delete_question' question.pk %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-secondary btn-sm">삭제</button>
+                </form>
+            </div>
+        {% endif %}
         <hr>
         <div class="content-box">
             {% if question.image %}
@@ -218,20 +229,20 @@
             <div class="comment-content">{{ question.content }}</div>
         </div>
         <form action="{% url 'board:like_question' question.pk %}" method="post" class="mt-4">
-        {% csrf_token %}
-        <div class="form-group flex-row">
-            {% if user.is_authenticated %}
-                <button type="submit" class="btn {% if has_liked %}btn-secondary{% else %}btn-primary{% endif %}">
-                    좋아요 ({{ question.likes }})
-                </button>
-            {% else %}
-            <button type="button" class="btn btn-primary" id="loginButton">로그인</button>
-                    좋아요 ({{ question.likes }})
-                </button>
-            {% endif %}
-            <button type="button" class="btn btn-primary" id="backButton">목록</button>
-        </div>
-        <hr>
+            {% csrf_token %}
+            <div class="form-group flex-row">
+                {% if user.is_authenticated %}
+                    <button type="submit" class="btn {% if has_liked %}btn-secondary{% else %}btn-primary{% endif %}">
+                        좋아요 ({{ question.likes }})
+                    </button>
+                {% else %}
+                <button type="button" class="btn btn-primary" id="loginButton">로그인</button>
+                        좋아요 ({{ question.likes }})
+                    </button>
+                {% endif %}
+                <button type="button" class="btn btn-primary" id="backButton">목록</button>
+            </div>
+            <hr>
         </form>
         <div class="comments-section">
             <h1>댓글</h1>
