@@ -133,6 +133,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 SITE_ID = 1
 
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = 'post:post_list'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

@@ -58,7 +58,7 @@ def login_check(request):
         
         if user is not None:
             login(request, user)
-            return redirect("/")
+            return redirect("post:post_list")
         else:
             return render(request, 'accounts/login_fail.html')
     else:

@@ -14,7 +14,7 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     
     path('post/', include('post.urls', namespace='post')),
-    path('', lambda r: redirect('post:post_list'), name='root'),
+    path('', lambda r: redirect('accounts:login'), name='root'),
 
     path('board/', include('board.urls')),
     
