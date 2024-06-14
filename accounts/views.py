@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import logout as django_logout
 from .forms import SignupForm, LoginForm
 from .models import Profile, Follow
-
+from django.contrib import messages
 import json
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
@@ -60,10 +60,11 @@ def login_check(request):
             login(request, user)
             return redirect("post:post_list")
         else:
-            return render(request, 'accounts/login_fail.html')
+            messages.error(request, "로그인에 실패하셨습니다.")
+            return redirect('accounts:login')
     else:
         form = LoginForm()
-        return render(request, 'accounts/login.html', {"form":form})
+        return render(request, 'accounts/login.html', {"form": form})
     
 def logout(request):
     django_logout(request)
