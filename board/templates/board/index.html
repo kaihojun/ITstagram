@@ -182,10 +182,9 @@
                 <button class="btn btn-outline-success" type="submit">검색</button>
             </form>
             <button class="btn btn-primary mb-3" id="createQuestionButton">질문하기</button>
-            <button class="btn btn-secondary">내 Q&A 보기</button>
+            <button class="btn btn-secondary" id="userQuestionsButton">내 Q&A 보기</button>
         </div>
     </div>
-
     
     <!-- 메인 컨테이너 -->
     <div class="container-fluid mt-3 main-content">
@@ -282,7 +281,11 @@
         document.getElementById('createQuestionButton').addEventListener('click', function() {
             window.location.href = "{% url 'board:create_question' %}";
         });
-    </script>  
+    
+        document.getElementById('userQuestionsButton').addEventListener('click', function() {
+            window.location.href = "{% url 'board:user_questions' %}";
+        });
+    </script>
 {% endblock %}
 
 {% block js %}
