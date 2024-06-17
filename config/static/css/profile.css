@@ -76,12 +76,16 @@
     display:inline-block;
     cursor: pointer;
     position:relative;
+    margin-right: 20px; /* 기본 간격 설정 */
 }
 
-.detail .about > span:nth-child(1){
+/* .detail .about > span:nth-child(1){
     margin-right: 50px;
-}
+} */
 
+.detail .about > span:last-child {
+    margin-right: 0; /* 마지막 요소는 오른쪽 여백 제거 */
+}
 
 .detail .about > span:after{
     content:'';
