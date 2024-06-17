@@ -102,3 +102,46 @@ def delete_comment(request, pk):
     
     comment.delete()
     return redirect('board:question_detail', pk=comment.question.pk)
+
+@login_required
+def delete_question(request, pk):
+    question = get_object_or_404(Question, pk=pk)
+    if question.user != request.user:
+        return HttpResponseForbidden("이 질문을 삭제할 권한이 없습니다.")
+    
+    question.delete()
+    return redirect('board:index')
+
+@login_required
+def edit_question(request, pk):
+    question = get_object_or_404(Question, pk=pk)
+    if question.user != request.user:
+        return HttpResponseForbidden("이 질문을 수정할 권한이 없습니다.")
+    
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        content = request.POST.get('content')
+        image = request.FILES.get('image', None)
+        
+        question.title = title
+        question.content = content
+        if image:
+            question.image = image
+        question.save()
+        
+        return redirect('board:question_detail', pk=question.pk)
+    
+    return render(request, 'board/edit_question.html', {'question': question})
+
+@login_required
+def user_questions(request):
+    user = request.user
+    user_questions_list = Question.objects.filter(user=user).order_by('-pub_date')
+
+    paginator = Paginator(user_questions_list, 10)  # 페이지 당 10개의 질문
+    page_number = request.GET.get('page')
+    user_questions = paginator.get_page(page_number)
+
+    return render(request, 'board/user_questions.html', {
+        'user_questions': user_questions
+    })

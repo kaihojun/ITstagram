@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    ITstagram
+    ITstagram - My Q&A
 {% endblock %}
 
 {% block head %}
@@ -127,16 +127,6 @@
         padding: 1rem;
         padding-top: 70px; /* adjust based on your navbar height */
     }
-    .qna-top-10 {
-        display: flex;
-        justify-content: space-between;
-    }
-    .qna-top-10 .column {
-        width: 48%;
-    }
-    .qna-top-10 .list-group-item {
-        margin: 0.5rem 0;
-    }
     .small-text {
         font-size: 0.875rem;
         color: #6c757d;
@@ -185,51 +175,21 @@
             <button class="btn btn-secondary" id="userQuestionsButton">내 Q&A 보기</button>
         </div>
     </div>
-    
+
     <!-- 메인 컨테이너 -->
     <div class="container-fluid mt-3 main-content">
         <div class="row">
             <!-- 메인 컨텐츠 영역 -->
             <div class="col-md-12">
-                <h3>Q&A Top 10</h3>
-                <hr>
-                <br>
-                <div class="qna-top-10">
-                    <div class="column">
-                        <h4>Top 1~5</h4>
-                        {% for question in top_questions|slice:":5" %}
-                        <li class="list-group-item">
-                            <a href="{% url 'board:question_detail' question.pk %}" class="text-decoration-none">
-                                {{ question.title }}
-                                <span class="small-text">작성자: {{ question.user.username }} | 작성일: {{ question.pub_date }}</span>
-                            </a>
-                            <span class="badge bg-secondary float-end">♥ {{ question.likes }}</span>
-                        </li>
-                        {% endfor %}
-                    </div>
-                    <div class="column">
-                        <h4>Top 6~10</h4>
-                        {% for question in top_questions|slice:"5:10" %}
-                        <li class="list-group-item">
-                            <a href="{% url 'board:question_detail' question.pk %}" class="text-decoration-none">
-                                {{ question.title }}
-                                <span class="small-text">작성자: {{ question.user.username }} | 작성일: {{ question.pub_date }}</span>
-                            </a>
-                            <span class="badge bg-secondary float-end">♥ {{ question.likes }}</span>
-                        </li>
-                        {% endfor %}
-                    </div>
-                </div>
-                <br>
-                <h3>IT Q&A</h3>
+                <h3>내가 작성한 Q&A</h3>
                 <hr>
                 <br>
                 <ul class="list-group mb-4">
-                    {% for question in latest_questions %}
+                    {% for question in user_questions %}
                     <li class="list-group-item">
                         <a href="{% url 'board:question_detail' question.pk %}" class="text-decoration-none">
                             {{ question.title }}
-                            <span class="small-text">작성자: {{ question.user.username }} | 작성일: {{ question.pub_date }}</span>
+                            <span class="small-text">작성일: {{ question.pub_date }}</span>
                         </a>
                         <span class="badge bg-secondary float-end">♥ {{ question.likes }}</span>
                     </li>
@@ -239,9 +199,9 @@
                 <!-- 페이지네이션 -->
                 <nav aria-label="Page navigation">
                     <ul class="pagination justify-content-center">
-                        {% if latest_questions.has_previous %}
+                        {% if user_questions.has_previous %}
                         <li class="page-item">
-                            <a class="page-link" href="?q={{ query|default_if_none:'' }}&page={{ latest_questions.previous_page_number }}" aria-label="Previous">
+                            <a class="page-link" href="?page={{ user_questions.previous_page_number }}" aria-label="Previous">
                                 <span aria-hidden="true">&laquo;</span>
                             </a>
                         </li>
@@ -252,16 +212,16 @@
                             </span>
                         </li>
                         {% endif %}
-                        {% for num in latest_questions.paginator.page_range %}
-                        {% if latest_questions.number == num %}
+                        {% for num in user_questions.paginator.page_range %}
+                        {% if user_questions.number == num %}
                         <li class="page-item active"><span class="page-link">{{ num }}</span></li>
-                        {% elif num > latest_questions.number|add:'-3' and num < latest_questions.number|add:'3' %}
-                        <li class="page-item"><a class="page-link" href="?q={{ query|default_if_none:'' }}&page={{ num }}">{{ num }}</a></li>
+                        {% elif num > user_questions.number|add:'-3' and num < user_questions.number|add:'3' %}
+                        <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
                         {% endif %}
                         {% endfor %}
-                        {% if latest_questions.has_next %}
+                        {% if user_questions.has_next %}
                         <li class="page-item">
-                            <a class="page-link" href="?q={{ query|default_if_none:'' }}&page={{ latest_questions.next_page_number }}" aria-label="Next">
+                            <a class="page-link" href="?page={{ user_questions.next_page_number }}" aria-label="Next">
                                 <span aria-hidden="true">&raquo;</span>
                             </a>
                         </li>
@@ -281,7 +241,7 @@
         document.getElementById('createQuestionButton').addEventListener('click', function() {
             window.location.href = "{% url 'board:create_question' %}";
         });
-    
+
         document.getElementById('userQuestionsButton').addEventListener('click', function() {
             window.location.href = "{% url 'board:user_questions' %}";
         });
