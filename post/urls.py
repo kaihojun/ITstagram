@@ -1,5 +1,6 @@
 from django.urls import path
 from .views import *
+from . import views
 
 app_name = 'post'
 
@@ -23,5 +24,5 @@ urlpatterns = [
     path('<username>/list/detail', my_post_list, name='my_post_list'),
 
     
-    
+    path('<int:pk>/', views.post_detail, name='detail'),
 ]

@@ -29,7 +29,7 @@
             <ul class="toggle_box">
                 <li>
                 {% if user.profile in post.author.profile.get_follower %}        
-                <input type="submit" class="follow" value="팔로잉" data-name="follow" name="{{ post.author.profile.id }}">
+                <input type="submit" class="follow" value="팔로우 취소" data-name="follow" name="{{ post.author.profile.id }}">
                 {% else %}
                 <input type="submit" class="follow" value="팔로우" data-name="follow" name="{{ post.author.profile.id }}">                                    
                 {% endif %}
