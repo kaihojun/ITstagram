@@ -39,18 +39,20 @@
                                     {% if user.profile in post.author.profile.get_follower %}
                                     <input type="submit" class="follow" value="팔로우 취소" data-name="follow" name="{{ post.author.profile.id }}">
                                     {% else %}
-                                    <input type="submit" class="follow" value="팔로우" data-name="follow" name="{{ post.author.profile.id }}">
+                                    <input style="background-color: white; border: none; font-weight: bold; font-size: 16px;" type="submit" class="follow" value="팔로우" data-name="follow" name="{{ post.author.profile.id }}">
+
                                     {% endif %}
                                     </li>
                                     {% if post.author == user %}
                                     <li>
-                                        <a class="post-edit" href="{% url 'post:post_edit' post.pk %}">수정</a>
+                                        <a class="post-edit" href="{% url 'post:post_edit' post.pk %}" style="display: block; text-align: center;font-weight: bold; font-size: 16px;">수정</a>    
                                     </li>
                                     <li>
-                                        <form class="post-delete-form" action="{% url 'post:post_delete' post.pk %}" method="post">
+                                        <form class="post-delete-form" action="{% url 'post:post_delete' post.pk %}" method="post" style="text-align: center;">
                                             {% csrf_token %}
-                                            <input type="submit" class="post-delete" value="삭제">
+                                            <input style="background-color: white; border: none; font-weight: bold; font-size: 16px; display: inline-block;" type="submit" class="post-delete" value="삭제">
                                         </form>
+                                        
                                     </li>
                                     {% endif %}
                                 </ul>
@@ -65,10 +67,11 @@
                                     <span>{{ comment.content }}</span>
                                     <span>
                                         {% if user == comment.author %}
-                                        <input type="button" class="del-comment" data-name="comment_delete" value="삭제" name="{{ comment.id }}">
-                                        {% endif %}
+                                        <input style="color: red; background: none; border: none;" type="button" class="del-comment" data-name="comment_delete" value="댓글 삭제" name="{{ comment.id }}">
+                                    {% endif %}
+                                    
                                     </span>
-                                    <div class="time">{{ comment.created_at|timesince }}</div>
+                                    <div class="time">{{ comment.created_at|timesince }}전</div>
                                 </div>
                             </div>
                             {% endfor %}

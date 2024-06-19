@@ -3,8 +3,6 @@ from django.db import models
 from imagekit.models import ProcessedImageField
 from imagekit.processors import ResizeToFill
 
-
-
 def user_path(instance, filename):
     from random import choice
     import string
@@ -66,19 +64,13 @@ class Profile(models.Model):
     def is_following(self, user):
         return user in self.get_following
     
+    def get_all_users(self):
+        return Profile.objects.all()
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    def get_non_followers(self):
+        followers = self.get_follower
+        non_followers = Profile.objects.exclude(id__in=[user.id for user in followers]).exclude(id=self.id)
+        return non_followers
     
 class Follow(models.Model):
     from_user = models.ForeignKey(Profile,
@@ -96,37 +88,3 @@ class Follow(models.Model):
         unique_together = (
             ('from_user', 'to_user')
         )
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
