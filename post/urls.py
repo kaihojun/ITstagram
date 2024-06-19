@@ -25,4 +25,6 @@ urlpatterns = [
 
     
     path('<int:pk>/', views.post_detail, name='detail'),
+    path('<int:pk>/', post_detail, name='post_detail'),
+    path('posts/user/<str:username>/', views.user_post_list, name='user_post_list'),
 ]

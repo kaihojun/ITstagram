@@ -129,11 +129,11 @@
                         {{ user.post_set.count }}
                     </li>
                     <li>
-                        <span id="follow-list" data-user-id="{{ user.id }}">팔로잉</span>
+                        <span id="follow-list" data-user-id="{{ user.id }}">팔로워</span>
                         {{ user.profile.follower_count }}
                     </li>
                     <li>
-                        <span>팔로우</span>
+                        <span>팔로잉</span>
                         {{ user.profile.following_count }}
                         <!-- {% for following in user.profile.get_following %}
                             <div class="user">

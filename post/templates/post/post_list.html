@@ -138,8 +138,26 @@
 
                 <div class="content">{{ post|add_link|safe|linebreaksbr }}</div>
 
-                
                 <div class="comment_container">
+                    <div class="comment" id="comment-list-ajax-post{{post.id}}">
+                        {% for comment in post.comment_set.all %}
+                        <div class="comment-detail" id="comment{{ comment.id }}" style="padding: 10px; margin-bottom: 10px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div class="nick_name m_text" style="font-weight: bold; margin-bottom: 5px;">{{ comment.author.profile.nickname }}</div>
+                                <div>{{ comment.content }}</div>
+                                <div class="time" style="font-size: 0.9em; color: #888;margin-top: 5px;">{{ comment.created_at|timesince }}전</div>
+                            </div>
+                            {% if user == comment.author %}
+                            <input type="button" class="del-comment delete-comment-style" data-name="comment_delete" value="댓글 삭제" name="{{ comment.id }} "style="
+                            color: red; background-color: white; border: none; padding: 5px 10px;border-radius: 5px; cursor: pointer;transition: background-color 0.3s ease; margin-left: 400px;">
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                
+                <!-- <div class="comment_container">
                     <div class="comment" id="comment-list-ajax-post{{post.id}}">
                         {% for comment in post.comment_set.all %}
                         <div class="comment-detail" id="comment{{ comment.id }}">
@@ -154,7 +172,7 @@
                         {% endfor %}
 
                     </div>
-                </div>
+                </div> -->
 
                 <!-- <div class="comment_container">
                     <div class="comment" id="comment-list-ajax-post{{post.id}}">
@@ -244,36 +262,38 @@
                 </div>
             </article>
 
-            <article class="recommend">
-                <header class="reco_header">
-                    <div>회원님을 위한 추천</div>
+            <article class="follow_list">
+                <header class="follow_header">
+                    <div>팔로우 목록</div>
                     <div class="more"></div>
                 </header>
-                {% if user.profile.get_non_followers %}
-                {% for user_profile in user.profile.get_non_followers %}
-                <div class="user"
+                {% if user.profile.get_following %}
+                {% for user_profile in user.profile.get_following %}
+                <div class="user" id="follow-user-{{ user_profile.id }}"
                     style="display: flex; align-items: center; justify-content: space-between; width: 80%; padding: 10px 20px;">
                     <div style="display: flex; align-items: center;">
                         <div class="thumb_img">
                             {% if user_profile.picture %}
-                            <img src="{{ user_profile.picture.url }}" alt="{{ user_profile.nickname }}"
-                                style="width: 34px; height: 34px;">
+                            <a href="{% url 'post:user_post_list' username=user_profile.user.username %}">
+                                <img src="{{ user_profile.picture.url }}" alt="{{ user_profile.nickname }}" style="width: 34px; height: 34px;">
+                            </a>
                             {% endif %}
                         </div>
-                        <div class="id" style="font-size: 14px; margin-left: 10px;">{{ user_profile.nickname }}</div>
+                        <div class="id" style="font-size: 14px; margin-left: 10px;">
+                            <a href="{% url 'post:user_post_list' username=user_profile.user.username %}">
+                                {{ user_profile.nickname }}
+                            </a>
+                        </div>
                     </div>
-                    <button  class="follow-btn" data-user-id="{{ user_profile.id }}" 
-                        style="padding: 5px 10px; background-color: white; color: #007bff; border: none; border-radius: 4px; cursor: pointer;">
-                        {% if user.profile in user_profile.get_follower %}
+                    <button class="follow-btn" data-user-id="{{ user_profile.id }}" 
+                        style="padding: 5px 10px; background-color: white; color: #007bff; border: none; border-radius: 4px; cursor: pointer;"
+                        onclick="unfollowUser({{ user_profile.id }})">
                         팔로우 취소
-                        {% else %}
-                        팔로우
-                        {% endif %}
                     </button>
                 </div>
                 {% endfor %}
                 {% else %}
-                <p>모든 유저를 팔로우 했습니다.</p>
+                <p>팔로우한 유저가 없습니다.</p>
                 {% endif %}
             </article>
 

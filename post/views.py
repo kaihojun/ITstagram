@@ -298,3 +298,40 @@ def comment_delete(request):
         status = 0
         
     return HttpResponse(json.dumps({'message': message, 'status': status, }), content_type="application/json")
+
+
+
+
+
+from django.shortcuts import render, get_object_or_404
+from django.contrib.auth import get_user_model
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from .models import Post
+from .forms import CommentForm
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def user_post_list(request, username):
+    user = get_object_or_404(get_user_model(), username=username)
+    post_list = Post.objects.filter(author=user) \
+        .prefetch_related('tag_set', 'like_user_set__profile', 'comment_set__author__profile',
+                          'author__profile__follower_user', 'author__profile__follower_user__from_user') \
+        .select_related('author__profile')
+
+    paginator = Paginator(post_list, 3)  # 페이지네이션 적용
+    page_num = request.GET.get('page', 1)
+
+    try:
+        posts = paginator.page(page_num)
+    except PageNotAnInteger:
+        posts = paginator.page(1)
+    except EmptyPage:
+        posts = paginator.page(paginator.num_pages)
+
+    comment_form = CommentForm()
+    
+    return render(request, 'post/post_list.html', {
+        'posts': posts,
+        'comment_form': comment_form,
+        'user_profile': user.profile,
+    })
