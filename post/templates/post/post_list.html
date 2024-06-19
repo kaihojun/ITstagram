@@ -11,11 +11,43 @@
         width: 100%;
         height: 100%;
     }
+    .pagination {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+    gap: 0.5rem; /* 각 페이지 링크 사이에 간격 추가 */
+    }
+
+    .pagination .page-item {
+        display: inline;
+    }
+
+    .pagination .page-link {
+        text-decoration: none;
+        color: #007bff;
+        border: 1px solid #dee2e6;
+        padding: 0.5rem 0.75rem;
+        margin-left: -1px;
+        line-height: 1.25;
+        border-radius: 5px;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: #007bff;
+        border-color: #007bff;
+        color: #fff;
+    }
+
+    .pagination .page-item.disabled .page-link {
+        color: #6c757d;
+        pointer-events: none;
+        background-color: #fff;
+        border-color: #dee2e6;
+    }
 </style>
 
 {% endblock %}
-
-
 
 {% block content %}
 <!-- hidden -->
@@ -29,7 +61,7 @@
             </div>
             <div class="id">{{ following.nickname }}</div>
         </div>
-        {% endfor%}
+        {% endfor %}
     </div>
 </div>
 {% else %}
@@ -74,22 +106,21 @@
 
                     <div class="sprite_more_icon" data-name="more">
                         <ul class="toggle_box">
+                            {% if post.author != user %}
                             <li>
                                 {% if user.profile in post.author.profile.get_follower %}
-                                <input style="background-color: white; border: none; font-weight: bold; font-size: 16px;" type="submit" class="follow" value="팔로우 취소" data-name="follow"
-                                    name="{{ post.author.profile.id }}">
+                                <input style="background-color: white; border: none; font-weight: bold; font-size: 16px;" type="submit" class="follow" value="팔로우 취소" data-name="follow" name="{{ post.author.profile.id }}">
                                 {% else %}
-                                <input style="background-color: white; border: none; font-weight: bold; font-size: 16px;" type="submit" class="follow" value="팔로우" data-name="follow"
-                                    name="{{ post.author.profile.id }}">
+                                <input style="background-color: white; border: none; font-weight: bold; font-size: 16px;" type="submit" class="follow" value="팔로우" data-name="follow" name="{{ post.author.profile.id }}">
                                 {% endif %}
                             </li>
+                            {% endif %}
                             {% if post.author == user %}
                             <li>
-                                <a class="post-edit" href="{% url 'post:post_edit' post.pk %}"style="display: block; text-align: center;font-weight: bold; font-size: 16px;">수정</a>
+                                <a class="post-edit" href="{% url 'post:post_edit' post.pk %}" style="display: block; text-align: center; font-weight: bold; font-size: 16px;">수정</a>
                             </li>
                             <li>
-                                <form class="post-delete-form" action="{% url 'post:post_delete' post.pk %}"
-                                    method="post">
+                                <form class="post-delete-form" action="{% url 'post:post_delete' post.pk %}" method="post">
                                     {% csrf_token %}
                                     <input style="background-color: white; border: none; font-weight: bold; font-size: 16px;" type="submit" class="post-delete" value="삭제">
                                 </form>
@@ -130,10 +161,8 @@
                 </div>
 
                 <div class="likes m_text">
-
-                    <span id="like-count-{{ post.id }}">좋아요{{ post.like_count }}개</span>
-                    <span id="bookmark-count-{{ post.id }}">북마크{{ post.bookmark_count}}개</span>
-
+                    <span id="like-count-{{ post.id }}">좋아요 {{ post.like_count }}개</span>
+                    <span id="bookmark-count-{{ post.id }}">북마크 {{ post.bookmark_count }}개</span>
                 </div>
 
                 <div class="content">{{ post|add_link|safe|linebreaksbr }}</div>
@@ -156,53 +185,14 @@
                     </div>
                 </div>
 
-                
-                <!-- <div class="comment_container">
-                    <div class="comment" id="comment-list-ajax-post{{post.id}}">
-                        {% for comment in post.comment_set.all %}
-                        <div class="comment-detail" id="comment{{ comment.id }}">
-                            <div class="nick_name m_text">{{ comment.author.profile.nickname}}</div>
-                            <div>{{comment.content}}</div>
-                            {% if user == comment.author %}
-                            <input style="color: red; background: none; border: none;" type="button" class="del-comment" data-name="comment_delete" value="댓글 삭제" name="{{ comment.id }}">
-                            {% endif %}
-
-                            <div class="time">{{ comment.created_at|timesince }}전</div>
-                        </div>
-                        {% endfor %}
-
-                    </div>
-                </div> -->
-
-                <!-- <div class="comment_container">
-                    <div class="comment" id="comment-list-ajax-post{{post.id}}">
-                        {% for comment in post.comment_set.all %}
-                        <div class="comment-detail" id="comment{{ comment.id }}">
-                            <div class="nick_name m_text" style="margin-bottom: 10px;">{{ comment.author.profile.nickname}}
-                                <div class="time"style="margin-top: 10px;">{{ comment.created_at|timesince }}{% if user == comment.author %}전
-                                </div>
-                            </div>
-                            <div>{{comment.content}}</div>
-                            <div>
-                            <input style="color: red; background: none; border: none;" type="button" class="del-comment" data-name="comment_delete" value="댓글 삭제" name="{{ comment.id }}">
-                                    {% endif %}
-                                </div>
-                        </div>
-                        {% endfor %}
-
-                    </div>
-                </div> -->
-
                 <div class="timer">{{ post.created_at|timesince }}</div>
 
                 <div class="comment_field" id="add-comment-post{{post.id}}">
                     {% if user.is_authenticated %}
                     {{ comment_form }}
-
                     <div class="upload_btn m_text" name="{{post.id}}" data-name="comment">게시</div>
                     {% else %}
                     {{ comment_form }}
-
                     <div class="upload_btn m_text" name="{{post.id}}" data-name="comment"
                         onclick="alert('댓글을 작성하려면 로그인이 필요합니다')">게시</div>
                     {% endif%}
@@ -210,11 +200,65 @@
 
             </article>
             {% endfor %}
-            <div id="post_list_ajax"></div>
-            <input type="hidden" id="page" value="2">
         </div>
-
-
+        <!-- 페이지네이션 -->
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                {% if posts.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1" aria-label="First">
+                        <span aria-hidden="true">&laquo; 처음</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ posts.previous_page_number }}" aria-label="Previous">
+                        <span aria-hidden="true">이전</span>
+                    </a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link" aria-label="Previous">
+                        <span aria-hidden="true">&laquo; 처음</span>
+                    </span>
+                </li>
+                <li class="page-item disabled">
+                    <span class="page-link" aria-label="Previous">
+                        <span aria-hidden="true">이전</span>
+                    </span>
+                </li>
+                {% endif %}
+                {% for num in posts.paginator.page_range %}
+                {% if posts.number == num %}
+                <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                {% elif num > posts.number|add:'-3' and num < posts.number|add:'3' %}
+                <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                {% endif %}
+                {% endfor %}
+                {% if posts.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ posts.next_page_number }}" aria-label="Next">
+                        <span aria-hidden="true">다음</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ posts.paginator.num_pages }}" aria-label="Last">
+                        <span aria-hidden="true">마지막 &raquo;</span>
+                    </a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link" aria-label="Next">
+                        <span aria-hidden="true">다음</span>
+                    </span>
+                </li>
+                <li class="page-item disabled">
+                    <span class="page-link" aria-label="Last">
+                        <span aria-hidden="true">마지막 &raquo;</span>
+                    </span>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
 
         <div class="side_box" style="">
             {% if user_profile %}
@@ -244,7 +288,7 @@
                     <div>스토리</div>
                     <div class="more"></div>
                 </header>
-
+            
                 <div class="scroll_inner">
                     {% if follow_post_list %}
                     {% for post in follow_post_list %}
@@ -253,7 +297,7 @@
                             <img src="{{ post.author.profile.picture.url }}" alt="프로필사진">
                         </div>
                         <div class="detail">
-                            <div class="id">{{ post.content }}</div>
+                            <div class="id">{{ post.content|slice:":15" }}{% if post.content|length > 15 %}...{% endif %}</div>
                             <div class="time">{{ post.updated_at|timesince }}</div>
                         </div>
                     </div>
@@ -285,15 +329,10 @@
                             </a>
                         </div>
                     </div>
-                    <button class="follow-btn" data-user-id="{{ user_profile.id }}" 
-                        style="padding: 5px 10px; background-color: white; color: #007bff; border: none; border-radius: 4px; cursor: pointer;"
-                        onclick="unfollowUser({{ user_profile.id }})">
-                        팔로우 취소
-                    </button>
                 </div>
                 {% endfor %}
                 {% else %}
-                <p>팔로우한 유저가 없습니다.</p>
+                <p style="text-align: center; margin-bottom: 10px;">팔로우한 유저가 없습니다.</p>
                 {% endif %}
             </article>
 

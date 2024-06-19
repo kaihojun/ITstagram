@@ -41,26 +41,6 @@ def my_post_list(request, username):
         'username': username,
     })
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
-
 
 def post_list(request, tag=None):
     tag_all = Tag.objects.annotate(num_post=Count('post')).order_by('-num_post')
@@ -78,8 +58,8 @@ def post_list(request, tag=None):
 
     comment_form = CommentForm()
     
-    paginator = Paginator(post_list, 3)
-    page_num = request.POST.get('page')
+    paginator = Paginator(post_list, 5)  # 페이지네이션을 10개씩 설정
+    page_num = request.GET.get('page', 1)
     
     try:
         posts = paginator.page(page_num)
@@ -87,20 +67,11 @@ def post_list(request, tag=None):
         posts = paginator.page(1)
     except EmptyPage:
         posts = paginator.page(paginator.num_pages)
-        
-    if request.is_ajax():
-        return render(request, 'post/post_list_ajax.html', {
-            'posts': posts,
-            'comment_form': comment_form,
-        })
     
     if request.method == 'POST':
         tag = request.POST.get('tag')
         tag_clean = ''.join(e for e in tag if e.isalnum())
         return redirect('post:post_search', tag_clean)
-    
-    
-    
     
     if request.user.is_authenticated:
         username = request.user
@@ -187,7 +158,6 @@ def post_like(request):
     return HttpResponse(json.dumps(context), content_type="application/json")
 
 
-
 @login_required
 @require_POST
 def post_bookmark(request):
@@ -207,14 +177,6 @@ def post_bookmark(request):
     return HttpResponse(json.dumps(context), content_type="application/json")    
     
 
-
-
-
-
-
-
-
-
 @login_required
 def post_delete(request, pk):
     post = get_object_or_404(Post, pk=pk)
@@ -226,11 +188,6 @@ def post_delete(request, pk):
         post.delete()
         # messages.success(request, '삭제완료')
         return redirect('post:post_list')
-
-
-
-
-
 
 
 @login_required
@@ -318,20 +275,10 @@ def user_post_list(request, username):
                           'author__profile__follower_user', 'author__profile__follower_user__from_user') \
         .select_related('author__profile')
 
-    paginator = Paginator(post_list, 3)  # 페이지네이션 적용
-    page_num = request.GET.get('page', 1)
-
-    try:
-        posts = paginator.page(page_num)
-    except PageNotAnInteger:
-        posts = paginator.page(1)
-    except EmptyPage:
-        posts = paginator.page(paginator.num_pages)
-
     comment_form = CommentForm()
     
     return render(request, 'post/post_list.html', {
-        'posts': posts,
+        'posts': post_list,
         'comment_form': comment_form,
         'user_profile': user.profile,
     })

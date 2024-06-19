@@ -15,7 +15,7 @@ def index(request):
     else:
         latest_questions_list = Question.objects.order_by('-pub_date')
 
-    paginator = Paginator(latest_questions_list, 10)  # 페이지 당 10개의 질문
+    paginator = Paginator(latest_questions_list, 5)  # 페이지 당 10개의 질문
     page_number = request.GET.get('page')
     latest_questions = paginator.get_page(page_number)
 

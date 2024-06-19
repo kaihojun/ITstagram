@@ -37,7 +37,7 @@
                                 <ul class="more_detail">
                                     <li>
                                     {% if user.profile in post.author.profile.get_follower %}
-                                    <input type="submit" class="follow" value="팔로우 취소" data-name="follow" name="{{ post.author.profile.id }}">
+                                    <input style="background-color: white; border: none; font-weight: bold; font-size: 16px;" type="submit" class="follow" value="팔로우 취소" data-name="follow" name="{{ post.author.profile.id }}">
                                     {% else %}
                                     <input style="background-color: white; border: none; font-weight: bold; font-size: 16px;" type="submit" class="follow" value="팔로우" data-name="follow" name="{{ post.author.profile.id }}">
 
